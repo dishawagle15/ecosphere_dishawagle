@@ -1,5 +1,5 @@
 import { Edit2, Plus, Trash2 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Card, { CardHeader } from "../components/ui/Card.jsx";
 import DataTable from "../components/ui/DataTable.jsx";
 import Modal from "../components/ui/Modal.jsx";
@@ -8,8 +8,6 @@ import StatusBadge from "../components/ui/StatusBadge.jsx";
 import useToast from "../hooks/useToast.js";
 import {
   initialCarbonTransactions,
-  initialEmissionFactors,
-  initialEnvironmentalGoals,
   initialProductProfiles,
 } from "../data/mockData.js";
 
@@ -29,16 +27,60 @@ const statusTone = {
 
 function Environmental() {
   const { showToast } = useToast();
+  
+  const [environmentalData, setEnvironmentalData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  
   const [activeTab, setActiveTab] = useState(tabs[0]);
   const [statusFilter, setStatusFilter] = useState("all");
+  
+  // Replaced tabs[0] and tabs[3] with empty arrays since they now come from the backend
   const [records, setRecords] = useState({
-    [tabs[0]]: initialEmissionFactors,
+    [tabs[0]]: [], 
     [tabs[1]]: initialProductProfiles,
     [tabs[2]]: initialCarbonTransactions,
-    [tabs[3]]: initialEnvironmentalGoals,
+    [tabs[3]]: [], 
   });
+  
   const [editingItem, setEditingItem] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchEnvironmentalData = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:5001/api/environmental"
+        );
+
+        const result = await response.json();
+
+        setEnvironmentalData(result.data);
+
+        // Map backend emission factors and sustainability goals into the records state
+        setRecords((prev) => ({
+          ...prev,
+          
+          [tabs[0]]: result.data.emissionFactors,
+          
+          [tabs[3]]: result.data.sustainabilityGoals.map((goal) => ({
+            id: goal.id,
+            goal: goal.title,
+            owner: "Sustainability Team",
+            progress: goal.progress,
+            due: "2026-12-31",
+            status: goal.progress >= 75 ? "On Track" : "At Risk",
+          })),
+        }));
+
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEnvironmentalData();
+  }, []);
 
   const config = {
     [tabs[0]]: {
