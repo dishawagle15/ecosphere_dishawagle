@@ -55,6 +55,10 @@ const navigationItems = [
 ];
 
 function Sidebar({ isCollapsed, isMobileOpen, onCloseMobile }) {
+  const handleNavigation = () => {
+    if (isMobileOpen) onCloseMobile();
+  };
+
   const sidebarContent = (
     <>
       <div
@@ -88,6 +92,7 @@ function Sidebar({ isCollapsed, isMobileOpen, onCloseMobile }) {
               <NavLink
                 to={item.path}
                 end={item.path === "/"}
+                onClick={handleNavigation}
                 className={({ isActive }) =>
                   [
                     "group flex h-11 items-center gap-3 rounded-md px-3 text-sm font-medium transition",

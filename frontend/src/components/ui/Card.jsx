@@ -1,6 +1,6 @@
 function Card({ children, className = "" }) {
   return (
-    <section className={`rounded-md border border-slate-200 bg-white shadow-sm ${className}`}>
+    <section className={`min-w-0 rounded-md border border-slate-200 bg-white shadow-sm ${className}`}>
       {children}
     </section>
   );

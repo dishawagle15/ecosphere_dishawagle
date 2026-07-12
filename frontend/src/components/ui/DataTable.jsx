@@ -33,7 +33,7 @@ function DataTable({
   const visibleRows = filteredData.slice((safePage - 1) * pageSize, safePage * pageSize);
 
   return (
-    <section className="rounded-md border border-slate-200 bg-white shadow-sm">
+    <section className="min-w-0 rounded-md border border-slate-200 bg-white shadow-sm">
       <div className="flex flex-col gap-4 border-b border-slate-100 p-5 lg:flex-row lg:items-center lg:justify-between">
         <div>
           {title ? <h2 className="text-base font-semibold text-slate-950">{title}</h2> : null}
@@ -78,6 +78,7 @@ function DataTable({
         {visibleRows.length ? (
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-slate-100">
+              {title ? <caption className="sr-only">{title}</caption> : null}
               <thead>
                 <tr>
                   {columns.map((column) => (
@@ -108,7 +109,7 @@ function DataTable({
         )}
       </div>
       <div className="flex items-center justify-between border-t border-slate-100 px-5 py-4 text-sm text-slate-500">
-        <span>
+        <span aria-live="polite">
           Page {safePage} of {totalPages}
         </span>
         <div className="flex gap-2">

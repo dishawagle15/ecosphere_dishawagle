@@ -3,45 +3,10 @@ import { useState } from "react";
 import Card, { CardHeader } from "../components/ui/Card.jsx";
 import DataTable from "../components/ui/DataTable.jsx";
 import Modal from "../components/ui/Modal.jsx";
+import RecordForm from "../components/ui/RecordForm.jsx";
 import StatusBadge from "../components/ui/StatusBadge.jsx";
 import useToast from "../hooks/useToast.js";
 import { initialCategories, initialDepartments } from "../data/mockData.js";
-
-function SimpleForm({ fields, item, onCancel, onSave }) {
-  const [form, setForm] = useState(() => item ?? Object.fromEntries(fields.map((field) => [field.key, field.defaultValue ?? ""])));
-
-  return (
-    <form
-      className="space-y-4 p-5"
-      onSubmit={(event) => {
-        event.preventDefault();
-        onSave(form);
-      }}
-    >
-      <div className="grid gap-4 sm:grid-cols-2">
-        {fields.map((field) => (
-          <label key={field.key} className="space-y-2 text-sm font-medium text-slate-700">
-            <span>{field.label}</span>
-            <input
-              value={form[field.key] ?? ""}
-              onChange={(event) => setForm((current) => ({ ...current, [field.key]: event.target.value }))}
-              className="h-10 w-full rounded-md border border-slate-200 px-3 text-sm outline-none transition focus:border-emerald-300"
-              required
-            />
-          </label>
-        ))}
-      </div>
-      <div className="flex justify-end gap-3 border-t border-slate-100 pt-4">
-        <button type="button" onClick={onCancel} className="rounded-md border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50">
-          Cancel
-        </button>
-        <button type="submit" className="rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700">
-          Save
-        </button>
-      </div>
-    </form>
-  );
-}
 
 function ToggleRow({ label, description, enabled, onChange }) {
   return (
@@ -55,6 +20,8 @@ function ToggleRow({ label, description, enabled, onChange }) {
         onClick={onChange}
         className={enabled ? "relative h-6 w-11 rounded-full bg-emerald-600" : "relative h-6 w-11 rounded-full bg-slate-200"}
         aria-label={label}
+        role="switch"
+        aria-checked={enabled}
       >
         <span className={enabled ? "absolute right-1 top-1 size-4 rounded-full bg-white" : "absolute left-1 top-1 size-4 rounded-full bg-white"} />
       </button>
@@ -168,7 +135,7 @@ function Settings() {
       </div>
 
       <section className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
-        <div className="space-y-4">
+        <div className="min-w-0 space-y-4">
           <Card>
             <CardHeader title="Master Data" description="Manage organizational reference data." />
             <div className="flex gap-2 p-5">
@@ -200,7 +167,7 @@ function Settings() {
           />
         </div>
 
-        <div className="space-y-6">
+        <div className="min-w-0 space-y-6">
           <Card>
             <CardHeader title="ESG Configuration" description="Enterprise scoring settings" />
             <div className="space-y-4 p-5">
@@ -233,7 +200,12 @@ function Settings() {
       </section>
 
       <Modal isOpen={dialogOpen} onClose={() => setDialogOpen(false)} title={editingItem ? `Edit ${activeManager.slice(0, -1)}` : `Add ${activeManager.slice(0, -1)}`} description="This change is stored locally for the frontend prototype.">
-        <SimpleForm fields={activeConfig.fields} item={editingItem} onCancel={() => setDialogOpen(false)} onSave={saveManagerItem} />
+        <RecordForm
+          fields={activeConfig.fields}
+          item={editingItem}
+          onCancel={() => setDialogOpen(false)}
+          onSave={saveManagerItem}
+        />
       </Modal>
     </div>
   );

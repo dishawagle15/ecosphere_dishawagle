@@ -1,24 +1,24 @@
 import { CheckCircle2, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import ToastContext from "./toastContext.js";
 
 export function ToastProvider({ children }) {
   const [toasts, setToasts] = useState([]);
 
-  const showToast = (message) => {
-    const id = crypto.randomUUID();
+  const showToast = useCallback((message) => {
+    const id = globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`;
     setToasts((currentToasts) => [...currentToasts, { id, message }]);
     window.setTimeout(() => {
       setToasts((currentToasts) => currentToasts.filter((toast) => toast.id !== id));
     }, 2800);
-  };
+  }, []);
 
-  const value = useMemo(() => ({ showToast }), []);
+  const value = useMemo(() => ({ showToast }), [showToast]);
 
   return (
     <ToastContext.Provider value={value}>
       {children}
-      <div className="fixed bottom-4 right-4 z-[80] space-y-3">
+      <div className="fixed bottom-4 right-4 z-[80] space-y-3" aria-live="polite">
         {toasts.map((toast) => (
           <div
             key={toast.id}
