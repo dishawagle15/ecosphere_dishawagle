@@ -1,13 +1,31 @@
-# EcoSphere AI
+# ecosphere ai
 
-AI-powered ESG (Environmental, Social & Governance) management platform for enterprises.
+an ai-powered esg platform that helps organizations track sustainability metrics, monitor performance, and generate actionable insights.
 
-## Features
+## features
 
-- Environmental Management
-- Social & CSR
-- Governance
-- Gamification
-- Reports
-- AI Insights
+- environmental dashboard
+- social & csr management
+- governance tracking
+- ai insights
+- reports & analytics
+- gamification
+
+## tech stack
+
+- react
+- typescript
+- tailwind css
+- vite
+- node.js
+- express
+- mongodb
+- gemini api
+
+## run locally
+
+```bash
+npm install
+npm run dev
+```
 
