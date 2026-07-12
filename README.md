@@ -1,4 +1,4 @@
-# EcoSphere AI
+# EcoSphere 
 
 An enterprise ESG (Environmental, Social & Governance) management platform that helps organizations monitor sustainability metrics, CSR initiatives, governance compliance, and reporting through a unified dashboard.
 
