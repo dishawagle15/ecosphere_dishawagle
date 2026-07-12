@@ -11,4 +11,3 @@ AI-powered ESG (Environmental, Social & Governance) management platform for ente
 - Reports
 - AI Insights
 
-Built for Odoo Hackathon 2026.
