@@ -5,6 +5,32 @@ const getEnvironmentalData = () => {
     waterUsage: 12300,
     wasteRecycled: 78,
     renewableEnergy: 64,
+    emissionFactors: [
+  {
+    id: 1,
+    source: "solar power grid",
+    scope: "Scope 2",
+    factor: "0.716 kgCO2e/kWh",
+    region: "India",
+    status: "Active",
+  },
+  {
+    id: 2,
+    source: "Diesel generator",
+    scope: "Scope 1",
+    factor: "2.68 kgCO2e/litre",
+    region: "India",
+    status: "Review",
+  },
+  {
+    id: 3,
+    source: "Business travel",
+    scope: "Scope 3",
+    factor: "0.15 kgCO2e/km",
+    region: "Global",
+    status: "Active",
+  },
+],
 
     monthlyCarbon: [
       { month: "Jan", emissions: 210 },

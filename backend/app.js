@@ -1,3 +1,4 @@
+const socialRoutes = require("./routes/socialRoutes");
 const environmentalRoutes = require("./routes/environmentalRoutes");
 console.log("environmentalRoutes imported");
 const express = require("express");
@@ -13,6 +14,7 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/environmental", environmentalRoutes);
+app.use("/api/social", socialRoutes);
 console.log("/api/environmental registered");
 app.get("/api/health", (req, res) => {
   res.status(200).json({
