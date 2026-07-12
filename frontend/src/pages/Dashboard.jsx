@@ -25,27 +25,66 @@ import Card, { CardHeader } from "../components/ui/Card.jsx";
 import { SkeletonGrid } from "../components/ui/Skeleton.jsx";
 import useToast from "../hooks/useToast.js";
 import {
-  carbonTrend,
-  dashboardScores,
   departmentScores,
   recentActivities,
 } from "../data/mockData.js";
 
+// Added quickActions here to prevent the ReferenceError
 const quickActions = [
-  { label: "Add ESG Goal", icon: Target },
-  { label: "Log Carbon Data", icon: Recycle },
-  { label: "Create Report", icon: FileText },
-  { label: "Invite Team", icon: Plus },
+  { label: "Log Carbon Data", icon: Plus },
+  { label: "Start Challenge", icon: Target },
+  { label: "View Reports", icon: FileText },
+  { label: "Update Goals", icon: Recycle },
 ];
 
 function Dashboard() {
   const { showToast } = useToast();
   const cardIcons = [Award, Leaf, Users, ClipboardCheck];
+  
   const [isLoading, setIsLoading] = useState(true);
+  const [dashboardData, setDashboardData] = useState(null);
+
+  const dashboardScores = dashboardData
+    ? [
+        {
+          label: "Overall ESG Score",
+          value: dashboardData.overallScore,
+          delta: "Live data from backend",
+          tone: "emerald",
+        },
+        {
+          label: "Environmental",
+          value: dashboardData.environmentalScore,
+          delta: "Live data from backend",
+        },
+        {
+          label: "Social",
+          value: dashboardData.socialScore,
+          delta: "Live data from backend",
+        },
+        {
+          label: "Governance",
+          value: dashboardData.governanceScore,
+          delta: "Live data from backend",
+        },
+      ]
+    : [];
 
   useEffect(() => {
-    const timer = window.setTimeout(() => setIsLoading(false), 350);
-    return () => window.clearTimeout(timer);
+    const fetchDashboardData = async () => {
+      try {
+        const response = await fetch("http://localhost:5001/api/dashboard");
+        const result = await response.json();
+
+        setDashboardData(result.data);
+      } catch (error) {
+        console.error("Error fetching dashboard data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchDashboardData();
   }, []);
 
   return (
@@ -115,7 +154,10 @@ function Dashboard() {
           />
           <div className="h-72 p-5">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={carbonTrend} margin={{ left: -24, right: 12 }}>
+              <LineChart
+                data={dashboardData?.carbonTrend || []}
+                margin={{ left: -24, right: 12 }}
+              >
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                 <XAxis dataKey="month" tickLine={false} axisLine={false} />
                 <YAxis tickLine={false} axisLine={false} />
