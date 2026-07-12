@@ -2,6 +2,7 @@ import { NavLink } from "react-router-dom";
 import {
   BarChart3,
   ChevronLeft,
+  Circle,
   X,
   FileText,
   Gauge,
@@ -14,10 +15,41 @@ import {
 
 const navigationItems = [
   { name: "Dashboard", path: "/", icon: Gauge },
-  { name: "Environmental", path: "/environmental", icon: Leaf },
-  { name: "Social", path: "/social", icon: Users },
-  { name: "Governance", path: "/governance", icon: Scale },
-  { name: "Gamification", path: "/gamification", icon: Medal },
+  {
+    name: "Environmental",
+    path: "/environmental",
+    icon: Leaf,
+    children: [
+      "Emission Factors",
+      "Product ESG Profiles",
+      "Carbon Transactions",
+      "Environmental Goals",
+    ],
+  },
+  {
+    name: "Social",
+    path: "/social",
+    icon: Users,
+    children: ["CSR Activities", "Employee Participation", "Diversity Dashboard"],
+  },
+  {
+    name: "Governance",
+    path: "/governance",
+    icon: Scale,
+    children: ["Policies", "Policy Acknowledgements", "Audits", "Compliance Issues"],
+  },
+  {
+    name: "Gamification",
+    path: "/gamification",
+    icon: Medal,
+    children: [
+      "Challenges",
+      "Challenge Participation",
+      "Badges",
+      "Rewards",
+      "Leaderboard",
+    ],
+  },
   { name: "Reports", path: "/reports", icon: FileText },
   { name: "Settings", path: "/settings", icon: Settings },
 ];
@@ -47,28 +79,42 @@ function Sidebar({ isCollapsed, isMobileOpen, onCloseMobile }) {
           <X size={19} aria-hidden="true" />
         </button>
       </div>
-      <nav className="space-y-1" aria-label="Main navigation">
+      <nav className="space-y-1 overflow-y-auto pr-1" aria-label="Main navigation">
         {navigationItems.map((item) => {
           const Icon = item.icon;
 
           return (
-            <NavLink
-              key={item.name}
-              to={item.path}
-              end={item.path === "/"}
-              className={({ isActive }) =>
-                [
-                  "group flex h-11 items-center gap-3 rounded-md px-3 text-sm font-medium transition",
-                  isCollapsed ? "lg:justify-center lg:px-0" : "",
-                  isActive
-                    ? "bg-emerald-50 text-emerald-700"
-                    : "text-slate-600 hover:bg-slate-100 hover:text-slate-950",
-                ].join(" ")
-              }
-            >
-              <Icon size={18} aria-hidden="true" />
-              <span className={isCollapsed ? "lg:hidden" : ""}>{item.name}</span>
-            </NavLink>
+            <div key={item.name}>
+              <NavLink
+                to={item.path}
+                end={item.path === "/"}
+                className={({ isActive }) =>
+                  [
+                    "group flex h-11 items-center gap-3 rounded-md px-3 text-sm font-medium transition",
+                    isCollapsed ? "lg:justify-center lg:px-0" : "",
+                    isActive
+                      ? "bg-emerald-50 text-emerald-700"
+                      : "text-slate-600 hover:bg-slate-100 hover:text-slate-950",
+                  ].join(" ")
+                }
+              >
+                <Icon size={18} aria-hidden="true" />
+                <span className={isCollapsed ? "lg:hidden" : ""}>{item.name}</span>
+              </NavLink>
+              {item.children ? (
+                <div className={isCollapsed ? "hidden" : "mb-2 ml-4 mt-1 space-y-1"}>
+                  {item.children.map((child) => (
+                    <div
+                      key={child}
+                      className="flex h-8 items-center gap-2 rounded-md px-3 text-xs font-medium text-slate-500"
+                    >
+                      <Circle size={6} aria-hidden="true" className="fill-emerald-300" />
+                      <span>{child}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : null}
+            </div>
           );
         })}
       </nav>
