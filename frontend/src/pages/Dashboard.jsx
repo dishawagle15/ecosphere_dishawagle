@@ -20,60 +20,16 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-
-const scoreCards = [
-  {
-    label: "Overall ESG Score",
-    value: "84",
-    detail: "+6 points this quarter",
-    icon: Award,
-    tone: "bg-emerald-600 text-white",
-  },
-  {
-    label: "Environmental",
-    value: "78",
-    detail: "Carbon intensity improving",
-    icon: Leaf,
-    tone: "bg-white text-emerald-700",
-  },
-  {
-    label: "Social",
-    value: "88",
-    detail: "Participation up 12%",
-    icon: Users,
-    tone: "bg-white text-emerald-700",
-  },
-  {
-    label: "Governance",
-    value: "91",
-    detail: "3 audits completed",
-    icon: ClipboardCheck,
-    tone: "bg-white text-emerald-700",
-  },
-];
-
-const carbonTrendData = [
-  { month: "Jan", emissions: 142 },
-  { month: "Feb", emissions: 136 },
-  { month: "Mar", emissions: 131 },
-  { month: "Apr", emissions: 124 },
-  { month: "May", emissions: 119 },
-  { month: "Jun", emissions: 111 },
-];
-
-const departmentRankings = [
-  { name: "Operations", score: 92, change: "+8" },
-  { name: "Supply Chain", score: 87, change: "+5" },
-  { name: "Human Resources", score: 84, change: "+4" },
-  { name: "Finance", score: 79, change: "+2" },
-];
-
-const recentActivities = [
-  "Carbon transaction approved for Plant A",
-  "CSR tree plantation activity completed",
-  "New anti-bribery policy acknowledged by 82% staff",
-  "Q2 ESG report draft generated",
-];
+import { useEffect, useState } from "react";
+import Card, { CardHeader } from "../components/ui/Card.jsx";
+import { SkeletonGrid } from "../components/ui/Skeleton.jsx";
+import useToast from "../hooks/useToast.js";
+import {
+  carbonTrend,
+  dashboardScores,
+  departmentScores,
+  recentActivities,
+} from "../data/mockData.js";
 
 const quickActions = [
   { label: "Add ESG Goal", icon: Target },
@@ -83,6 +39,15 @@ const quickActions = [
 ];
 
 function Dashboard() {
+  const { showToast } = useToast();
+  const cardIcons = [Award, Leaf, Users, ClipboardCheck];
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setIsLoading(false), 350);
+    return () => window.clearTimeout(timer);
+  }, []);
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -104,52 +69,53 @@ function Dashboard() {
         </button>
       </div>
 
-      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {scoreCards.map((card) => {
-          const Icon = card.icon;
+      {isLoading ? (
+        <SkeletonGrid />
+      ) : (
+        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {dashboardScores.map((card, index) => {
+            const Icon = cardIcons[index];
 
-          return (
-            <article
-              key={card.label}
-              className="rounded-md border border-slate-200 bg-white p-5 shadow-sm"
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="text-sm font-medium text-slate-500">{card.label}</p>
-                  <p className="mt-3 text-4xl font-semibold tracking-normal text-slate-950">
-                    {card.value}
-                  </p>
+            return (
+              <Card
+                key={card.label}
+                className={card.tone === "emerald" ? "border-emerald-200 bg-emerald-600 p-5 text-white" : "p-5"}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className={card.tone === "emerald" ? "text-sm font-medium text-emerald-50" : "text-sm font-medium text-slate-500"}>{card.label}</p>
+                    <p className={card.tone === "emerald" ? "mt-3 text-4xl font-semibold tracking-normal text-white" : "mt-3 text-4xl font-semibold tracking-normal text-slate-950"}>
+                      {card.value}
+                    </p>
+                  </div>
+                  <div
+                    className={card.tone === "emerald" ? "flex size-11 items-center justify-center rounded-md bg-white/15 text-white" : "flex size-11 items-center justify-center rounded-md border border-emerald-100 bg-emerald-50 text-emerald-700"}
+                  >
+                    <Icon size={21} aria-hidden="true" />
+                  </div>
                 </div>
-                <div
-                  className={[
-                    "flex size-11 items-center justify-center rounded-md border border-emerald-100",
-                    card.tone,
-                  ].join(" ")}
-                >
-                  <Icon size={21} aria-hidden="true" />
-                </div>
-              </div>
-              <p className="mt-4 text-sm text-emerald-700">{card.detail}</p>
-            </article>
-          );
-        })}
-      </section>
+                <p className={card.tone === "emerald" ? "mt-4 text-sm text-emerald-50" : "mt-4 text-sm text-emerald-700"}>{card.delta}</p>
+              </Card>
+            );
+          })}
+        </section>
+      )}
 
       <section className="grid gap-6 xl:grid-cols-[minmax(0,1.7fr)_minmax(320px,1fr)]">
-        <article className="rounded-md border border-slate-200 bg-white p-5 shadow-sm">
-          <div className="mb-5 flex items-center justify-between gap-3">
-            <div>
-              <h2 className="text-lg font-semibold text-slate-950">Carbon trend</h2>
-              <p className="mt-1 text-sm text-slate-500">Monthly emissions in tCO2e</p>
-            </div>
+        <Card>
+          <CardHeader
+            title="Carbon emissions trend"
+            description="Monthly emissions in tCO2e"
+            action={
             <div className="flex items-center gap-2 rounded-md bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-700">
               <TrendingDown size={16} aria-hidden="true" />
               21.8% down
             </div>
-          </div>
-          <div className="h-72">
+            }
+          />
+          <div className="h-72 p-5">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={carbonTrendData} margin={{ left: -24, right: 12 }}>
+              <LineChart data={carbonTrend} margin={{ left: -24, right: 12 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                 <XAxis dataKey="month" tickLine={false} axisLine={false} />
                 <YAxis tickLine={false} axisLine={false} />
@@ -164,9 +130,9 @@ function Dashboard() {
               </LineChart>
             </ResponsiveContainer>
           </div>
-        </article>
+        </Card>
 
-        <article className="rounded-md border border-slate-200 bg-white p-5 shadow-sm">
+        <Card className="p-5">
           <div className="mb-5 flex items-center gap-3">
             <div className="flex size-10 items-center justify-center rounded-md bg-emerald-50 text-emerald-700">
               <Building2 size={20} aria-hidden="true" />
@@ -179,7 +145,7 @@ function Dashboard() {
             </div>
           </div>
           <div className="space-y-4">
-            {departmentRankings.map((department) => (
+            {departmentScores.map((department, index) => (
               <div key={department.name}>
                 <div className="mb-2 flex items-center justify-between text-sm">
                   <span className="font-medium text-slate-700">{department.name}</span>
@@ -193,15 +159,15 @@ function Dashboard() {
                     style={{ width: `${department.score}%` }}
                   />
                 </div>
-                <p className="mt-1 text-xs text-slate-500">{department.change} this month</p>
+                <p className="mt-1 text-xs text-slate-500">Rank #{index + 1}</p>
               </div>
             ))}
           </div>
-        </article>
+        </Card>
       </section>
 
       <section className="grid gap-6 lg:grid-cols-2">
-        <article className="rounded-md border border-slate-200 bg-white p-5 shadow-sm">
+        <Card className="p-5">
           <h2 className="text-lg font-semibold text-slate-950">Recent activity</h2>
           <div className="mt-5 space-y-4">
             {recentActivities.map((activity) => (
@@ -211,9 +177,9 @@ function Dashboard() {
               </div>
             ))}
           </div>
-        </article>
+        </Card>
 
-        <article className="rounded-md border border-slate-200 bg-white p-5 shadow-sm">
+        <Card className="p-5">
           <h2 className="text-lg font-semibold text-slate-950">Quick actions</h2>
           <div className="mt-5 grid gap-3 sm:grid-cols-2">
             {quickActions.map((action) => {
@@ -223,6 +189,7 @@ function Dashboard() {
                 <button
                   key={action.label}
                   type="button"
+                  onClick={() => showToast(`${action.label} opened`)}
                   className="flex h-20 items-center gap-3 rounded-md border border-slate-200 bg-white px-4 text-left text-sm font-semibold text-slate-700 transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700"
                 >
                   <span className="flex size-10 items-center justify-center rounded-md bg-emerald-50 text-emerald-700">
@@ -233,7 +200,7 @@ function Dashboard() {
               );
             })}
           </div>
-        </article>
+        </Card>
       </section>
     </div>
   );

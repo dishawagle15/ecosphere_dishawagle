@@ -7,21 +7,24 @@ import Governance from "./pages/Governance.jsx";
 import Gamification from "./pages/Gamification.jsx";
 import Reports from "./pages/Reports.jsx";
 import Settings from "./pages/Settings.jsx";
+import { ToastProvider } from "./components/ui/Toast.jsx";
 
 function App() {
   return (
-    <Routes>
-      <Route element={<MainLayout />}>
-        <Route index element={<Dashboard />} />
-        <Route path="environmental" element={<Environmental />} />
-        <Route path="social" element={<Social />} />
-        <Route path="governance" element={<Governance />} />
-        <Route path="gamification" element={<Gamification />} />
-        <Route path="reports" element={<Reports />} />
-        <Route path="settings" element={<Settings />} />
-      </Route>
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+    <ToastProvider>
+      <Routes>
+        <Route element={<MainLayout />}>
+          <Route index element={<Dashboard />} />
+          <Route path="environmental" element={<Environmental />} />
+          <Route path="social" element={<Social />} />
+          <Route path="governance" element={<Governance />} />
+          <Route path="gamification" element={<Gamification />} />
+          <Route path="reports" element={<Reports />} />
+          <Route path="settings" element={<Settings />} />
+        </Route>
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </ToastProvider>
   );
 }
 
